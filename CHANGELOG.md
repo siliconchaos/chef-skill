@@ -1,4 +1,8 @@
-# 1.1.0 (2026-02-22)
+## [1.1.1](https://github.com/siliconchaos/chef-skill/compare/v1.0.0...v1.1.1) (2026-02-22)
+
+
+
+# [1.0.0](https://github.com/siliconchaos/chef-skill/compare/85ea913eb18c010b8a8b6ed9c39f695bffd04c34...v1.0.0) (2026-02-22)
 
 
 ### Bug Fixes
