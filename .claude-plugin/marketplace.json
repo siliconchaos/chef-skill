@@ -3,7 +3,7 @@
   "owner": {
     "name": "Silicon Chaos"
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "metadata": {
     "description": "Chef Automate and Chef Infra Server knife CLI skill — node management, cookbook operations, search, bootstrapping, SSH/WinRM execution, and troubleshooting.",
     "repository": "https://github.com/siliconchaos/chef-skill",
