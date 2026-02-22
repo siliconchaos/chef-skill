@@ -1,0 +1,32 @@
+{
+  "name": "siliconchaos",
+  "owner": {
+    "name": "Silicon Chaos"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "description": "Chef Automate and Chef Infra Server knife CLI skill — node management, cookbook operations, search, bootstrapping, SSH/WinRM execution, and troubleshooting.",
+    "repository": "https://github.com/siliconchaos/chef-skill",
+    "license": "MIT"
+  },
+  "plugins": [
+    {
+      "name": "chef-automate",
+      "description": "Use when working with Chef Automate or Chef Infra Server via the knife CLI. Covers configuration, node management, cookbook uploads, roles, environments, data bags, search, bootstrapping nodes, SSH/WinRM remote execution, status monitoring, failure diagnostics, and troubleshooting. Trigger on any mention of knife, chef-client, Chef Automate, Chef Infra, cookbooks, nodes, environments, data bags, bootstrap, or managing infrastructure with Chef.",
+      "source": "./",
+      "category": "development",
+      "keywords": [
+        "chef",
+        "chef-automate",
+        "chef-infra",
+        "knife",
+        "infrastructure",
+        "configuration-management",
+        "devops",
+        "cookbooks",
+        "nodes"
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}
