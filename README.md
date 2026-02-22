@@ -110,6 +110,10 @@ For significant changes, open an issue first to discuss the approach.
 - [Chef Automate](https://docs.chef.io/automate/) — UI and pipeline documentation
 - [knife search syntax](https://docs.chef.io/workstation/knife_search/) — Solr query reference
 
+## Attribution
+
+Skill structure and release automation inspired by [terraform-skill](https://github.com/antonbabenko/terraform-skill) by [Anton Babenko](https://github.com/antonbabenko).
+
 ## License
 
 [MIT](LICENSE)
