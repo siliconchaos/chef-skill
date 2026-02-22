@@ -11,8 +11,7 @@ Releases are automated from conventional commits:
 |---------------|-------------|
 | `feat!:` / `BREAKING CHANGE:` | Major |
 | `feat:` | Minor |
-| `fix:` | Patch |
-| Other | Patch |
+| `fix:` / other | Patch |
 
 ## [1.0.0] - 2026-02-21
 

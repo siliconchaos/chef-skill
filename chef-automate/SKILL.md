@@ -1,5 +1,6 @@
 ---
 name: chef-automate
+version: 1.0.0
 description: >
   Use this skill whenever the user wants to interact with Chef Automate or Chef
   Infra Server using the knife CLI. Covers configuration, node management,

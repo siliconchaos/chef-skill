@@ -1,0 +1,147 @@
+name: Validate Skill
+
+on:
+  pull_request:
+    paths:
+      - 'chef-automate/SKILL.md'
+      - 'chef-automate/references/**/*.md'
+      - '.claude-plugin/**'
+  push:
+    branches: [main]
+    paths:
+      - 'chef-automate/SKILL.md'
+      - 'chef-automate/references/**/*.md'
+      - '.claude-plugin/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate Skill Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: pip install pyyaml
+
+      - name: Check SKILL.md Frontmatter
+        run: |
+          python3 << 'EOF'
+          import yaml
+          import sys
+          import re
+
+          print("Validating chef-automate/SKILL.md frontmatter...")
+
+          with open('chef-automate/SKILL.md', 'r') as f:
+              content = f.read()
+
+          if not content.startswith('---'):
+              print('ERROR: No frontmatter found')
+              sys.exit(1)
+
+          parts = content.split('---', 2)
+          if len(parts) < 3:
+              print('ERROR: Invalid frontmatter format')
+              sys.exit(1)
+
+          frontmatter = yaml.safe_load(parts[1])
+
+          required = {'name', 'description'}
+          missing = required - set(frontmatter.keys())
+          if missing:
+              print(f'ERROR: Missing required fields: {missing}')
+              sys.exit(1)
+
+          name = frontmatter['name']
+          if not re.match(r'^[a-zA-Z0-9-]+$', name):
+              print(f'ERROR: Invalid name: {name}')
+              sys.exit(1)
+
+          desc_len = len(frontmatter['description'])
+          if desc_len > 1024:
+              print(f'ERROR: Description too long: {desc_len} chars (max 1024)')
+              sys.exit(1)
+
+          print(f'Frontmatter valid — name: {name}, description: {desc_len} chars')
+          if 'version' in frontmatter:
+              print(f'Version: {frontmatter["version"]}')
+          EOF
+
+      - name: Check File Size
+        run: |
+          LINES=$(wc -l < chef-automate/SKILL.md)
+          WORDS=$(wc -w < chef-automate/SKILL.md)
+          echo "chef-automate/SKILL.md: $LINES lines, $WORDS words"
+          if [ "$LINES" -gt 600 ]; then
+            echo "WARNING: $LINES lines (guideline: <600)"
+          else
+            echo "Size OK"
+          fi
+
+      - name: Validate marketplace.json
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+          import re
+
+          print("Validating .claude-plugin/marketplace.json...")
+
+          with open('.claude-plugin/marketplace.json', 'r') as f:
+              marketplace = json.load(f)
+
+          required_fields = ['name', 'owner', 'version', 'plugins']
+          missing = [f for f in required_fields if f not in marketplace]
+          if missing:
+              print(f'ERROR: Missing fields: {missing}')
+              sys.exit(1)
+
+          if 'name' not in marketplace['owner']:
+              print('ERROR: owner must have a name field')
+              sys.exit(1)
+
+          version = marketplace['version']
+          if not re.match(r'^\d+\.\d+\.\d+$', version):
+              print(f'ERROR: Invalid version format: {version}')
+              sys.exit(1)
+
+          if not isinstance(marketplace['plugins'], list) or len(marketplace['plugins']) == 0:
+              print("ERROR: 'plugins' must be a non-empty array")
+              sys.exit(1)
+
+          for idx, plugin in enumerate(marketplace['plugins']):
+              required_plugin = ['name', 'description', 'source']
+              missing = [f for f in required_plugin if f not in plugin]
+              if missing:
+                  print(f'ERROR: Plugin {idx} missing fields: {missing}')
+                  sys.exit(1)
+
+          plugin_version = marketplace['plugins'][0].get('version')
+          if plugin_version and plugin_version != version:
+              print(f'WARNING: Root version {version} != plugins[0].version {plugin_version}')
+
+          print(f'marketplace.json valid (v{version}, {len(marketplace["plugins"])} plugin(s))')
+          EOF
+
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: |
+            chef-automate/SKILL.md
+            chef-automate/references/**/*.md
+            README.md
+        continue-on-error: true
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "## Validation Passed" >> $GITHUB_STEP_SUMMARY
+          echo "All skill validation checks passed." >> $GITHUB_STEP_SUMMARY
